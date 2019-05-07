@@ -9,7 +9,56 @@
 <body>
         <input id="newTodo" type="text">
         <button id="submitTodo">submit</button>
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"></script>
+<div id="container"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js"></script>
+
+    <script> 
+    const searchField = document.querySelector("#newTodo");
+    const container = document.querySelector("#container");
+
+
+    const reducer = Redux.combineReducers({
+         todos: (state = [], action) => {
+             const newState = Object.assign([], state);
+             if (action.type == "add") {
+                 newState.push(action.item);
+             }
+             if (action.type =="remove") {
+                 newState.splice(action.index, 1)
+             }
+             return newState;
+         }
+    })
+
+const store = Redux.createStore(reducer);
+
+const render = ()=> {
+
+container.innerHTML = "";
+searchField.value = "";
+const state = store.getState();
+state.todos.forEach((todo , i) => {
+    const e = document.createElement("div");
+    e.innerHTML = todo;
+    container.appendChild(e);
+    e.onclick = ()=> {
+        store.dispatch({
+            type: "remove",
+            index: i
+        });
+        render();
+    }
+});
+}
+document.querySelector("#submitTodo").onclick = () => {
+store.dispatch({
+             type: "add",
+             item: searchField.value
+});
+render();
+
+}
+    </script>
 </body>
 </html>
